@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BNP Paribas - Connexion</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-page">
+
+        <div class="login-header">
+            <div class="bnp-logo-box">
+                <div class="bnp-logo-inner">
+                    <span class="bnp-title">BNP PARIBAS</span>
+                    <div class="bnp-squares">
+                        <div class="sq sq1"></div>
+                        <div class="sq sq2"></div>
+                        <div class="sq sq3"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="login-tagline">La banque d'un monde qui change</p>
+        </div>
+
+        <div class="login-card">
+            <h2 class="login-card-title">
+                <i class="fas fa-lock"></i> Espace Client Sécurisé
+            </h2>
+
+            <div class="login-error" id="login-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="error-msg">Identifiant ou mot de passe incorrect.</span>
+            </div>
+
+            <form id="login-form" onsubmit="doLogin(event)">
+                <div class="field">
+                    <label>Numéro client</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-user ico-left"></i>
+                        <input type="text" id="input-user" placeholder="Votre numéro client" autocomplete="username" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Mot de passe</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-key ico-left"></i>
+                        <input type="password" id="input-pass" placeholder="••••••••" autocomplete="current-password" required>
+                        <button type="button" class="btn-toggle-pass" onclick="togglePassword()" title="Afficher/Masquer le mot de passe">
+                            <i class="fas fa-eye" id="eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me"> Se souvenir de moi
+                    </label>
+                    <span class="forgot-link" onclick="showForgot()">Mot de passe oublié ?</span>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> SE CONNECTER
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <div class="badges">
+                <div class="badge-secure"><i class="fas fa-shield-alt"></i> Connexion SSL</div>
+                <div class="badge-secure"><i class="fas fa-check-circle"></i> Données chiffrées</div>
+            </div>
+            <p>© 2024 BNP Paribas — Simulation bancaire · Aucune transaction réelle</p>
+        </div>
+    </div>
+
+    <div class="spinner-overlay" id="spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const USERS = [{ login: 'DjanIsFake', password: '44454241' }];
+
+        function doLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('input-user').value.trim();
+            const pass = document.getElementById('input-pass').value;
+            hideError();
+            showSpinner(true);
+            setTimeout(() => {
+                const found = USERS.find(u => u.login === user && u.password === pass);
+                if (found) {
+                    if (document.getElementById('remember-me').checked) localStorage.setItem('bnp_user', user);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showSpinner(false);
+                    showError('Numéro client ou mot de passe incorrect. Veuillez réessayer.');
+                    document.getElementById('input-pass').value = '';
+                    document.getElementById('input-pass').focus();
+                }
+            }, 900);
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('input-pass');
+            const icon  = document.getElementById('eye-icon');
+            if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+            else { input.type = 'password'; icon.className = 'fas fa-eye'; }
+        }
+
+        function showForgot() { alert('Pour réinitialiser votre mot de passe,\ncontactez BNP Paribas au 0 820 820 001.'); }
+        function showError(msg) { document.getElementById('error-msg').textContent = msg; document.getElementById('login-error').classList.add('show'); }
+        function hideError() { document.getElementById('login-error').classList.remove('show'); }
+        function showSpinner(v) { document.getElementById('spinner').classList.toggle('show', v); }
+
+        window.onload = () => {
+            const saved = localStorage.getItem('bnp_user');
+            if (saved) { document.getElementById('input-user').value = saved; document.getElementById('remember-me').checked = true; document.getElementById('input-pass').focus(); }
+        };
+    </script>
+</body>
+</html>
